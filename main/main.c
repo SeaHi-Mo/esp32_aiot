@@ -27,6 +27,7 @@
 #include "aiot_mqtt_api.h"
 #include "app_data_md.h"
 #include "app_version.h"
+#include "app_ntp.h"
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -155,7 +156,7 @@ static pthread_t g_mqtt_process_thread;
 static pthread_t g_mqtt_recv_thread;
 static uint8_t g_mqtt_process_thread_running = 0;
 static uint8_t g_mqtt_recv_thread_running = 0;
-
+static uint8_t g_mqtt_recv_ntp_thread = 0;
 /* TODO: 如果要关闭日志, 就把这个函数实现为空, 如果要减少日志, 可根据code选择不打印
  *
  * 例如: [1577589489.033][LK-0317] mqtt_basic_demo&a13FN5TplKq
@@ -372,6 +373,13 @@ int linkkit_main(void)
     res = pthread_create(&g_mqtt_recv_thread, NULL, demo_mqtt_recv_thread, mqtt_handle);
     if (res < 0) {
         printf("pthread_create demo_mqtt_recv_thread failed: %d\n", res);
+        return -1;
+    }
+
+    /* 创建一个单独的线程用户获取NTP时间 */
+    res = pthread_create(&g_mqtt_recv_ntp_thread, NULL, app_aiot_get_ntp_time, mqtt_handle);
+    if (res < 0) {
+        printf("app_aiot_get_ntp_time failed: %d\n", res);
         return -1;
     }
 

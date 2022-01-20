@@ -9,6 +9,7 @@ set(include_dirs
     LinkSDK/components/ota
     app_aiot/data-model
     app_aiot/app_version
+    app_aiot/app_ntp
 )
 
 file(GLOB c_sdk_srcs
@@ -24,6 +25,7 @@ file(GLOB c_sdk_srcs
     "LinkSDK/components/ota/*.c"
     "app_aiot/data-model/*.c"
     "app_aiot/app_version/*.c"
+    "app_aiot/app_ntp/*.c"
     )
 
 idf_component_register(SRCS ${c_sdk_srcs}
