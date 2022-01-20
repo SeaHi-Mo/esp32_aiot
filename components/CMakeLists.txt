@@ -1,10 +1,14 @@
-set(include_dirs LinkSDK/core LinkSDK/core/sysdep LinkSDK/core/utils 
-app_aiot/data-model 
-LinkSDK/components/data-model
-LinkSDK/components/dynreg
-LinkSDK/components/dynreg-mqtt
-LinkSDK/components/ntp
-LinkSDK/components/ota
+set(include_dirs 
+    LinkSDK/core 
+    LinkSDK/core/sysdep 
+    LinkSDK/core/utils 
+    LinkSDK/components/data-model
+    LinkSDK/components/dynreg
+    LinkSDK/components/dynreg-mqtt
+    LinkSDK/components/ntp
+    LinkSDK/components/ota
+    app_aiot/data-model
+    app_aiot/app_version
 )
 
 file(GLOB c_sdk_srcs
@@ -18,9 +22,11 @@ file(GLOB c_sdk_srcs
     "LinkSDK/components/dynreg-mqtt/*.c"
     "LinkSDK/components/ntp/*.c"
     "LinkSDK/components/ota/*.c"
-    "app_aiot/data-model/*c"
+    "app_aiot/data-model/*.c"
+    "app_aiot/app_version/*.c"
     )
 
 idf_component_register(SRCS ${c_sdk_srcs}
                        INCLUDE_DIRS "${include_dirs}"
-                       REQUIRES mbedtls)
+                       REQUIRES mbedtls esp_https_ota lwip json app_update
+                       )

@@ -26,7 +26,7 @@
 #include "aiot_sysdep_api.h"
 #include "aiot_mqtt_api.h"
 #include "app_data_md.h"
-
+#include "app_version.h"
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -239,7 +239,6 @@ void demo_mqtt_default_recv_handler(void* handle, const aiot_mqtt_recv_t* packet
         }
     }
 }
-
 /* 执行aiot_mqtt_process的线程, 包含心跳发送和QoS1消息重发 */
 void* demo_mqtt_process_thread(void* args)
 {
@@ -347,7 +346,7 @@ int linkkit_main(void)
             return -1;
         }
     }
-
+    app_send_new_version(mqtt_handle);
     /* MQTT 发布消息功能示例, 请根据自己的业务需求进行使用 */
     {
         char* pub_topic = "/sys/a13FN5TplKq/mqtt_basic_demo/thing/event/property/post";
