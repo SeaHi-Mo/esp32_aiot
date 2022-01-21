@@ -9,7 +9,7 @@
 #include "aiot_mqtt_api.h"
 #include "aiot_dm_api.h"
 #include "app_data_md.h"
-
+#include "app_dynreg.h"
 static char* TAG = "AA_DATA_MD";
 
 /**
@@ -97,11 +97,13 @@ void* app_aiot_data_model_init(void* mqtt_handle)
     }
     /* 配置MQTT实例句柄 */
     aiot_dm_setopt(dm_handle, AIOT_DMOPT_MQTT_HANDLE, mqtt_handle);
+
     /* 配置消息接收处理回调函数 */
     aiot_dm_setopt(dm_handle, AIOT_DMOPT_RECV_HANDLER, (void*)app_dm_recv_handler);
 
     /* 配置是云端否需要回复post_reply给设备. 如果为1, 表示需要云端回复, 否则表示不回复 */
     aiot_dm_setopt(dm_handle, AIOT_DMOPT_POST_REPLY, (void*)&post_reply);
+
     return dm_handle;
 }
 /**

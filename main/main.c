@@ -322,17 +322,16 @@ int linkkit_main(void)
         cred.option = AIOT_SYSDEP_NETWORK_CRED_NONE;
     }
     */
-
     snprintf(host, 100, "%s.%s", product_key, url);
     /* 配置MQTT服务器地址 */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_HOST, (void*)host);
     /* 配置MQTT服务器端口 */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_PORT, (void*)&port);
-#ifndef APP_DYNREG_ENABLE
     /* 配置设备productKey */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_PRODUCT_KEY, (void*)product_key);
     /* 配置设备deviceName */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_DEVICE_NAME, (void*)device_name);
+#ifndef APP_DYNREG_ENABLE
     /* 配置设备deviceSecret */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_DEVICE_SECRET, (void*)device_secret);
 #else
@@ -359,25 +358,12 @@ int linkkit_main(void)
 
     /* MQTT 订阅topic功能示例, 请根据自己的业务需求进行使用 */
     {
-        char* sub_topic = "/sys/a13FN5TplKq/mqtt_basic_demo/thing/event/+/post_reply";
 
-        res = aiot_mqtt_sub(mqtt_handle, sub_topic, NULL, 1, NULL);
-        if (res < 0) {
-            printf("aiot_mqtt_sub failed, res: -0x%04X\n", -res);
-            return -1;
-        }
     }
-    app_send_new_version(mqtt_handle);
+
     /* MQTT 发布消息功能示例, 请根据自己的业务需求进行使用 */
     {
-        char* pub_topic = "/sys/a13FN5TplKq/mqtt_basic_demo/thing/event/property/post";
-        char* pub_payload = "{\"id\":\"1\",\"version\":\"1.0\",\"params\":{\"LightSwitch\":0}}";
-
-        res = aiot_mqtt_pub(mqtt_handle, pub_topic, (uint8_t*)pub_payload, strlen(pub_payload), 0);
-        if (res < 0) {
-            printf("aiot_mqtt_sub failed, res: -0x%04X\n", -res);
-            return -1;
-        }
+        app_send_new_version(mqtt_handle);
     }
 
     /* 创建一个单独的线程, 专用于执行aiot_mqtt_process, 它会自动发送心跳保活, 以及重发QoS1的未应答报文 */

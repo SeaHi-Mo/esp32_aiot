@@ -12,12 +12,16 @@
 #include "aiot_mqtt_api.h"
 #include "app_version.h"
 #include "cJSON.h"
+#include "app_dynreg.h"
+
 
 static char* TAG = "APP_SERSION";
 
+#ifndef APP_DYNREG_ENABLE
 extern char* product_key;
 extern char* device_name;
 extern char* device_secret;
+#endif
 
 /**
  * @brief Create a ota version cjson object

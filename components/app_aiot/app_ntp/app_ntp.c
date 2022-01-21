@@ -13,12 +13,14 @@
 #include "lwip/apps/sntp.h"
 #include "lwip/apps/sntp_opts.h"
 #include "app_ntp.h"
-
+#include "app_dynreg.h"
 static char* TAG = "APP_NTP";
 
+#ifndef APP_DYNREG_ENABLE
 extern char* product_key;
 extern char* device_name;
 extern char* device_secret;
+#endif
 
 time_t now = 0;
 /**
