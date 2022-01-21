@@ -28,6 +28,7 @@
 #include "app_data_md.h"
 #include "app_version.h"
 #include "app_ntp.h"
+#include "app_dynreg.h"
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -142,10 +143,11 @@ void wifi_init_sta(void)
  */
 
  /* TODO: 替换为自己设备的三元组 */
+#ifndef APP_DYNREG_ENABLE
 char* product_key = "a1xtxFaeqDt";
 char* device_name = "Dev1";
 char* device_secret = "76a5def29eff6efc7701dbd7cbd39d20";
-
+#endif
 /* 位于portfiles/aiot_port文件夹下的系统适配函数集合 */
 extern aiot_sysdep_portfile_t g_aiot_sysdep_portfile;
 
@@ -276,9 +278,12 @@ int linkkit_main(void)
 {
     int32_t     res = STATE_SUCCESS;
     void* mqtt_handle = NULL;
+#ifndef APP_DYNREG_ENABLE
     char* url = "iot-as-mqtt.cn-shanghai.aliyuncs.com"; /* 阿里云平台上海站点的域名后缀 */
-    char        host[100] = { 0 }; /* 用这个数组拼接设备连接的云平台站点全地址, 规则是 ${productKey}.iot-as-mqtt.cn-shanghai.aliyuncs.com */
     uint16_t    port = 443;      /* 无论设备是否使用TLS连接阿里云平台, 目的端口都是443 */
+#endif
+    char        host[100] = { 0 }; /* 用这个数组拼接设备连接的云平台站点全地址, 规则是 ${productKey}.iot-as-mqtt.cn-shanghai.aliyuncs.com */
+
     aiot_sysdep_network_cred_t cred; /* 安全凭据结构体, 如果要用TLS, 这个结构体中配置CA证书等参数 */
 
     /* 配置SDK的底层依赖 */
@@ -293,6 +298,15 @@ int linkkit_main(void)
     cred.sni_enabled = 1;                               /* TLS建连时, 支持Server Name Indicator */
     cred.x509_server_cert = ali_ca_cert;                 /* 用来验证MQTT服务端的RSA根证书 */
     cred.x509_server_cert_len = strlen(ali_ca_cert);     /* 用来验证MQTT服务端的RSA根证书长度 */
+
+#ifdef APP_DYNREG_ENABLE
+    uint8_t* mac = malloc(6);
+    esp_wifi_get_mac(WIFI_IF_STA, mac);
+    memset(device_name, 0, 13);
+    snprintf(device_name, 32, "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    device_name[13] = '\0';
+    dynregmq_start(&cloud_device_wl, cred);
+#endif
 
     /* 创建1个MQTT客户端实例并内部初始化默认参数 */
     mqtt_handle = aiot_mqtt_init();
@@ -314,12 +328,18 @@ int linkkit_main(void)
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_HOST, (void*)host);
     /* 配置MQTT服务器端口 */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_PORT, (void*)&port);
+#ifndef APP_DYNREG_ENABLE
     /* 配置设备productKey */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_PRODUCT_KEY, (void*)product_key);
     /* 配置设备deviceName */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_DEVICE_NAME, (void*)device_name);
     /* 配置设备deviceSecret */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_DEVICE_SECRET, (void*)device_secret);
+#else
+    aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_CLIENTID, cloud_device_wl.conn_clientid);
+    aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_USERNAME, cloud_device_wl.conn_username);
+    aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_PASSWORD, cloud_device_wl.conn_password);
+#endif
     /* 配置网络连接的安全凭据, 上面已经创建好了 */
     aiot_mqtt_setopt(mqtt_handle, AIOT_MQTTOPT_NETWORK_CRED, (void*)&cred);
     /* 配置MQTT默认消息接收回调函数 */
@@ -409,6 +429,9 @@ int linkkit_main(void)
     pthread_join(g_mqtt_process_thread, NULL);
     pthread_join(g_mqtt_recv_thread, NULL);
 
+#ifdef APP_DYNREG_ENABLE
+    free(mac);
+#endif
     return 0;
 }
 

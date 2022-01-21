@@ -10,6 +10,8 @@ set(include_dirs
     app_aiot/data-model
     app_aiot/app_version
     app_aiot/app_ntp
+    app_aiot/app_ota
+    app_aiot/app_dynreg
 )
 
 file(GLOB c_sdk_srcs
@@ -26,6 +28,8 @@ file(GLOB c_sdk_srcs
     "app_aiot/data-model/*.c"
     "app_aiot/app_version/*.c"
     "app_aiot/app_ntp/*.c"
+    "app_aiot/app_ota/*.c"
+    "app_aiot/app_dynreg/*.c"
     )
 
 idf_component_register(SRCS ${c_sdk_srcs}
