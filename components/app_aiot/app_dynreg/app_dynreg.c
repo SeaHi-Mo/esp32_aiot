@@ -51,12 +51,10 @@ void demo_dynregmq_recv_handler(void* handle, const aiot_dynregmq_recv_t* packet
 
             /* 免白名单模式, 用户务必要对MQTT的建连信息clientid, username和password进行持久化保存 */
             memset(&cloud_device_wl, 0, sizeof(cloud_device_wl_t));
-            memcpy(cloud_device_wl.conn_clientid, packet->data.deviceinfo_nwl.clientid,
-                   strlen(packet->data.deviceinfo_nwl.clientid));
-            memcpy(cloud_device_wl.conn_username, packet->data.deviceinfo_nwl.username,
-                   strlen(packet->data.deviceinfo_nwl.username));
-            memcpy(cloud_device_wl.conn_password, packet->data.deviceinfo_nwl.password,
-                   strlen(packet->data.deviceinfo_nwl.password));
+            memcpy(cloud_device_wl.conn_clientid, packet->data.deviceinfo_nwl.clientid, strlen(packet->data.deviceinfo_nwl.clientid));
+            memcpy(cloud_device_wl.conn_username, packet->data.deviceinfo_nwl.username, strlen(packet->data.deviceinfo_nwl.username));
+            memcpy(cloud_device_wl.conn_password, packet->data.deviceinfo_nwl.password, strlen(packet->data.deviceinfo_nwl.password));
+
         }
                                              break;
         default: {
@@ -170,7 +168,6 @@ int dynregmq_start(cloud_device_wl_t* cloud_dvc, aiot_sysdep_network_cred_t cred
     if (res < STATE_SUCCESS) {
         printf("aiot_dynregmq_recv failed: -0x%04X\n", -res);
         aiot_dynregmq_deinit(&dynregmq_handle);
-
         return -1;
     }
     if (skip_pre_regist == 0) {
@@ -180,6 +177,8 @@ int dynregmq_start(cloud_device_wl_t* cloud_dvc, aiot_sysdep_network_cred_t cred
         printf("clientid: %s\n", cloud_device_wl.conn_clientid);
         printf("username: %s\n", cloud_device_wl.conn_username);
         printf("password: %s\n", cloud_device_wl.conn_password);
+
+
     }
     /* 销毁动态注册会话实例 */
     res = aiot_dynregmq_deinit(&dynregmq_handle);

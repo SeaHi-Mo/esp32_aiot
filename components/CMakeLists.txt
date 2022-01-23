@@ -12,6 +12,7 @@ set(include_dirs
     app_aiot/app_ntp
     app_aiot/app_ota
     app_aiot/app_dynreg
+    app_aiot/app_flash
 )
 
 file(GLOB c_sdk_srcs
@@ -30,9 +31,10 @@ file(GLOB c_sdk_srcs
     "app_aiot/app_ntp/*.c"
     "app_aiot/app_ota/*.c"
     "app_aiot/app_dynreg/*.c"
+    "app_aiot/app_flash/*.c"
     )
 
 idf_component_register(SRCS ${c_sdk_srcs}
                        INCLUDE_DIRS "${include_dirs}"
-                       REQUIRES mbedtls esp_https_ota lwip json app_update
+                       REQUIRES mbedtls esp_https_ota lwip json app_update nvs_flash
                        )

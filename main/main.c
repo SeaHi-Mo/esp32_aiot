@@ -30,6 +30,7 @@
 #include "app_ntp.h"
 #include "app_dynreg.h"
 #include "app_ota.h"
+#include "app_flash.h"
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -306,7 +307,8 @@ int linkkit_main(void)
     memset(device_name, 0, 13);
     snprintf(device_name, 32, "%02X%02X%02X%02X%02X%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     device_name[13] = '\0';
-    dynregmq_start(&cloud_device_wl, cred);
+    if (app_flash_read_dynreg(&cloud_device_wl)!=ESP_OK)
+        dynregmq_start(&cloud_device_wl, cred);
 #endif
 
     /* 创建1个MQTT客户端实例并内部初始化默认参数 */

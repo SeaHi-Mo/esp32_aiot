@@ -3,9 +3,11 @@
 
 //如无需使用动态注册，就把这个宏屏蔽掉
 #define APP_DYNREG_ENABLE
-
+#include "aiot_state_api.h"
+#include "aiot_sysdep_api.h"
 #include "aiot_dynregmq_api.h"
 #ifdef APP_DYNREG_ENABLE
+
 typedef struct {
     char conn_clientid[128];
     char conn_username[128];
