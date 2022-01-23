@@ -29,6 +29,7 @@
 #include "app_version.h"
 #include "app_ntp.h"
 #include "app_dynreg.h"
+#include "app_ota.h"
 /* The examples use WiFi configuration that you can set via project configuration menu
 
    If you'd rather not, just change the below entries to strings with
@@ -358,7 +359,7 @@ int linkkit_main(void)
 
     /* MQTT 订阅topic功能示例, 请根据自己的业务需求进行使用 */
     {
-
+        esp_ota_aiot_pthread(mqtt_handle);
     }
 
     /* MQTT 发布消息功能示例, 请根据自己的业务需求进行使用 */

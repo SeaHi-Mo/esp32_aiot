@@ -14,7 +14,6 @@
 #include "cJSON.h"
 #include "app_dynreg.h"
 
-
 static char* TAG = "APP_SERSION";
 
 #ifndef APP_DYNREG_ENABLE

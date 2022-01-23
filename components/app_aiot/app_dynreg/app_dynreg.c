@@ -15,9 +15,9 @@ static const char* TAG = "dynregmq device";
 
 //请改成自己产品的三元组
 
-char* product_key = "a1xtxFaeqDt";
+char* product_key = "a1y36ql6F5x";
 char device_name[13] = { '\0' };
-char* product_secret = "z6X6jvJ20bqKnuBz";
+char* product_secret = "aNnFWOPOrNEGG59Z";
 char* url = "iot-as-mqtt.cn-shanghai.aliyuncs.com"; /* 阿里云平台上海站点的域名后缀 */
 uint16_t    port = 443;      /* 无论设备是否使用TLS连接阿里云平台, 目的端口都是443 */
 cloud_device_wl_t cloud_device_wl;
